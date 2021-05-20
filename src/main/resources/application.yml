@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    platform: postgres:latest
+    url: jdbc:postgresql://localhost:5432/timetable
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: create
