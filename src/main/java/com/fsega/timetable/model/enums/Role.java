@@ -3,5 +3,6 @@ package com.fsega.timetable.model.enums;
 public enum Role {
     ADMIN,
     TEACHER,
-    USER
+    INTERNAL_USER,
+    EXTERNAL_USER
 }

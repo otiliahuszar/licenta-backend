@@ -1,9 +1,6 @@
 package com.fsega.timetable.model.external;
 
-import java.util.UUID;
-
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fsega.timetable.model.enums.Role;
+import javax.validation.constraints.NotBlank;
 
 import lombok.*;
 
@@ -12,14 +9,20 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserDto {
+public class UserCreateDto {
 
-    private UUID id;
+    @NotBlank
     private String firstName;
-    private String lastName;
-    private String email;
-    private String username;
-    private Role role;
 
+    @NotBlank
+    private String lastName;
+
+    @NotBlank
+    private String email;
+
+    @NotBlank
+    private String username;
+
+    @NotBlank
+    private String password;
 }

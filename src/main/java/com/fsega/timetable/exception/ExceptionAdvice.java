@@ -13,6 +13,21 @@ import lombok.*;
 public class ExceptionAdvice {
 
     @ResponseBody
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(BadRequestException.class)
+    public Error notFoundException(BadRequestException e) {
+        return new Error(e.getMessage());
+    }
+
+
+    @ResponseBody
+    @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler(UnauthorizedException.class)
+    public Error unauthorizedException(UnauthorizedException e) {
+        return new Error(e.getMessage());
+    }
+
+    @ResponseBody
     @ResponseStatus(code = HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundException.class)
     public Error notFoundException(NotFoundException e) {
