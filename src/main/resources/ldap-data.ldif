@@ -1,0 +1,51 @@
+version: 1
+
+# Entry 1: dc=huszarotilia,dc=com
+dn: dc=huszarotilia,dc=com
+dc: huszarotilia
+o: huszarotilia
+objectclass: top
+objectclass: dcObject
+objectclass: organization
+
+dn: ou=admins,dc=huszarotilia,dc=com
+objectclass: organizationalUnit
+objectclass: top
+ou: admins
+
+dn: ou=teachers,dc=huszarotilia,dc=com
+objectclass: organizationalUnit
+objectclass: top
+ou: teachers
+
+dn: ou=students,dc=huszarotilia,dc=com
+objectclass: organizationalUnit
+objectclass: top
+ou: students
+
+dn: cn=ohuszar-admin,ou=admins,dc=huszarotilia,dc=com
+cn: ohuszar-admin
+givenname: Otilia - Admin
+sn: Huszar
+objectclass: inetOrgPerson
+objectclass: top
+uid: ohuszar-admin
+userpassword: $2a$10$rskFi7Ma1fA/z5w45j5nvumynagXj.ZycKorsIr3mJbPAHXeCaxLy
+
+dn: cn=ohuszar-profesor,ou=teachers,dc=huszarotilia,dc=com
+cn: ohuszar
+givenname: Otilia - Profesor
+sn: Huszar
+objectclass: inetOrgPerson
+objectclass: top
+uid: ohuszar-profesor
+userpassword: $2a$10$rskFi7Ma1fA/z5w45j5nvumynagXj.ZycKorsIr3mJbPAHXeCaxLy
+
+dn: cn=ohuszar-student,ou=students,dc=huszarotilia,dc=com
+cn: ohuszar-student
+givenname: Otilia - Student
+sn: Huszar
+objectclass: inetOrgPerson
+objectclass: top
+uid: ohuszar-student
+userpassword: $2a$10$rskFi7Ma1fA/z5w45j5nvumynagXj.ZycKorsIr3mJbPAHXeCaxLy

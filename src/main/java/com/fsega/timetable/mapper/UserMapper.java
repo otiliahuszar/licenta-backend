@@ -3,9 +3,9 @@ package com.fsega.timetable.mapper;
 import java.util.List;
 
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.fsega.timetable.config.security.UserDetails;
+import com.fsega.timetable.config.ldap.LdapUser;
 import com.fsega.timetable.model.enums.Role;
 import com.fsega.timetable.model.external.UserCreateDto;
 import com.fsega.timetable.model.external.UserDto;
@@ -30,6 +30,17 @@ public class UserMapper {
                 .build();
     }
 
+    public static UserDto toDto(LdapUser entity) {
+        if (entity == null) {
+            return null;
+        }
+        return UserDto.builder()
+                .firstName(entity.getFirstName())
+                .lastName(entity.getLastName())
+                .username(entity.getUsername())
+                .build();
+    }
+
     public static User toEntity(UserCreateDto dto) {
         if (dto == null) {
             return null;
@@ -39,7 +50,6 @@ public class UserMapper {
                 .lastName(dto.getLastName())
                 .email(dto.getEmail())
                 .username(dto.getUsername())
-                .password(new BCryptPasswordEncoder().encode(dto.getPassword()))
                 .role(Role.EXTERNAL_USER)
                 .build();
     }
@@ -54,6 +64,19 @@ public class UserMapper {
                 .email(entity.getEmail())
                 .password(entity.getPassword())
                 .authorities(List.of(new SimpleGrantedAuthority(entity.getRole().toString())))
+                .build();
+    }
+
+    public static UserDetails toUserDetails(LdapUser ldapUser) {
+        if (ldapUser == null) {
+            return null;
+        }
+        return UserDetails.builder()
+                //.id(ldapUser.getId())
+                .username(ldapUser.getUsername())
+                //.email(ldapUser.getEmail())
+                .password(ldapUser.getPassword())
+                //.authorities(List.of(new SimpleGrantedAuthority(ldapUser.getRole().toString())))
                 .build();
     }
 }

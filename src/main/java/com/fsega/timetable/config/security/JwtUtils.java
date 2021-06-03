@@ -21,12 +21,13 @@ public class JwtUtils {
     @Value("${jwt.expirationInMillis}")
     private int expirationInMillis;
 
-    public String generateJwtToken(Authentication authentication) {
+    public String generateJwtToken(Authentication authentication, String issuer) {
         UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
 
         return Jwts.builder()
                 .setSubject(userPrincipal.getUsername())
                 .setIssuedAt(new Date())
+                .setIssuer(issuer)
                 .setExpiration(new Date((new Date()).getTime() + expirationInMillis))
                 .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
@@ -37,6 +38,13 @@ public class JwtUtils {
                 .setSigningKey(secret)
                 .parseClaimsJws(token)
                 .getBody().getSubject();
+    }
+
+    String getIssuer(String token) {
+        return Jwts.parser()
+                .setSigningKey(secret)
+                .parseClaimsJws(token)
+                .getBody().getIssuer();
     }
 
     boolean validateJwtToken(String authToken) {

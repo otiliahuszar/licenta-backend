@@ -1,3 +1,6 @@
+server:
+  port: 8080
+
 spring:
   datasource:
     platform: postgres:latest
@@ -7,7 +10,14 @@ spring:
   jpa:
     hibernate:
       ddl-auto: create
-
+  ldap:
+    embedded:
+      port: 389
+      ldif: classpath:ldap-data.ldif
+      base-dn: dc=huszarotilia,dc=com
+      credential:
+        username: uid=admin
+        password: password
 jwt:
   secret: jWtS3cR3t
   expirationInMillis: 3600000
