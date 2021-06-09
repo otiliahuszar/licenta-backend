@@ -9,15 +9,16 @@ spring:
     password: postgres
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
   ldap:
     embedded:
       port: 389
       ldif: classpath:ldap-data.ldif
-      base-dn: dc=huszarotilia,dc=com
+      base-dn: o=huszarotilia,c=com
       credential:
         username: uid=admin
         password: password
+
 jwt:
   secret: jWtS3cR3t
   expirationInMillis: 3600000

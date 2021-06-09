@@ -1,7 +1,7 @@
 package com.fsega.timetable.config.security;
 
 import java.io.IOException;
-import java.security.InvalidParameterException;
+import java.util.UUID;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -16,7 +16,6 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.fsega.timetable.config.ldap.LdapUserRepository;
 import com.fsega.timetable.mapper.UserMapper;
 import com.fsega.timetable.repository.UserRepository;
 
@@ -28,7 +27,6 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
 
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
-    private final LdapUserRepository ldapUserRepository;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -38,29 +36,19 @@ public class AuthenticationTokenFilter extends OncePerRequestFilter {
             String jwt = request.getHeader("Authorization");
 
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
-                String username = jwtUtils.getUsernameFromJwtToken(jwt);
+                UUID userId = jwtUtils.getUserId(jwt);
 
-                String issuer = jwtUtils.getIssuer(jwt);
-                UserDetails userDetails;
-
-                if ("db".equals(issuer)) {
-                    userDetails = userRepository.findByUsername(username)
-                            .map(UserMapper::toUserDetails)
-                            .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " was not found"));
-                } else if ("ldap".equals(issuer)) {
-                    userDetails = ldapUserRepository.findByUsername(username)
-                            .map(UserMapper::toUserDetails)
-                            .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " was not found"));
-                } else {
-                    throw new InvalidParameterException("Unknown token issuer: " + issuer);
-                }
+                UserDetails userDetails = userRepository.findById(userId)
+                        .map(UserMapper::toUserDetails)
+                        .orElseThrow(() -> new UsernameNotFoundException("User with id " + userId + " was not found"));
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             e.printStackTrace();
         }
         filterChain.doFilter(request, response);

@@ -13,7 +13,7 @@ import lombok.*;
 @MappedSuperclass
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class AbstractEntity {
+abstract class AbstractEntity {
 
     @Id
     @GeneratedValue(generator = "uuid2")

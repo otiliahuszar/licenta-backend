@@ -7,6 +7,7 @@ import com.fsega.timetable.model.enums.Role;
 import lombok.*;
 
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,12 +21,13 @@ public class User extends AbstractEntity {
     @Column(nullable = false)
     private String lastName;
 
+    @Column(nullable = false)
     private String email;
 
     @Column(nullable = false)
     private String username;
 
-    @Setter
+    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)

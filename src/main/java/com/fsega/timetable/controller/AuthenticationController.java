@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*", maxAge = 3600)
 public class AuthenticationController {
 
     private final DBAuthenticationProvider dbAuthenticationProvider;
@@ -29,12 +28,7 @@ public class AuthenticationController {
         Authentication authentication = dbAuthenticationProvider.authenticate(
                 new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication, "db");
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        UserDto userDto = userService.getUser(userDetails.getId());
-        return new LoginResponseDto(jwt, userDto);
+        return setAuthAndBuildToken(authentication);
     }
 
     @PostMapping("/login/ldap")
@@ -42,11 +36,15 @@ public class AuthenticationController {
         Authentication authentication = ldapAuthenticationProvider.authenticate(
                 new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword()));
 
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtUtils.generateJwtToken(authentication, "ldap");
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        return setAuthAndBuildToken(authentication);
+    }
 
-        UserDto userDto = userService.getLdapUser(userDetails.getUsername());
+    private LoginResponseDto setAuthAndBuildToken(Authentication auth) {
+        SecurityContextHolder.getContext().setAuthentication(auth);
+        UserDetails userDetails = (UserDetails) auth.getPrincipal();
+
+        UserDto userDto = userService.getUser(userDetails.getId());
+        String jwt = jwtUtils.generateJwtToken(auth);
         return new LoginResponseDto(jwt, userDto);
     }
 

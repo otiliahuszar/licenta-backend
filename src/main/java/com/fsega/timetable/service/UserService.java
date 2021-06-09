@@ -5,10 +5,11 @@ import java.util.UUID;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.fsega.timetable.config.ldap.LdapUser;
 import com.fsega.timetable.exception.BadRequestException;
 import com.fsega.timetable.exception.NotFoundException;
-import com.fsega.timetable.config.ldap.LdapUserRepository;
 import com.fsega.timetable.mapper.UserMapper;
+import com.fsega.timetable.model.enums.Role;
 import com.fsega.timetable.model.external.UserCreateDto;
 import com.fsega.timetable.model.external.UserDto;
 import com.fsega.timetable.model.internal.User;
@@ -21,7 +22,6 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final LdapUserRepository ldapUserRepository;
     private final PasswordEncoder encoder;
 
     public UserDto getUser(UUID id) {
@@ -30,18 +30,23 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("User with id " + id + " was not found"));
     }
 
-    public UserDto getLdapUser(String username) {
-        return ldapUserRepository.findByUsername(username)
-                .map(UserMapper::toDto)
-                .orElseThrow(() -> new NotFoundException("User with id " + username + " was not found"));
+    public User createLdapUser(LdapUser ldapUser, String password) {
+        User user = userRepository.findByUsernameAndRole(ldapUser.getUsername(), ldapUser.getRole());
+        if (user != null) {
+            return user;
+        }
+        user = UserMapper.toEntity(ldapUser);
+        user.setPassword(encoder.encode(password));
+        return userRepository.save(user);
     }
 
-    public UserDto createUser(UserCreateDto dto) {
+    public UserDto createExternalUser(UserCreateDto dto) {
         validateUsername(dto.getUsername());
         validateEmail(dto.getEmail());
 
         User s = UserMapper.toEntity(dto);
         s.setPassword(encoder.encode(dto.getPassword()));
+        s.setRole(Role.EXTERNAL_USER);
 
         User user = userRepository.save(s);
         return UserMapper.toDto(user);

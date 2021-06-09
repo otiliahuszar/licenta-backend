@@ -21,7 +21,7 @@ public class UserController {
 
     @PostMapping
     public UserDto createUser(@RequestBody @Valid UserCreateDto userCreateDto) {
-        return userService.createUser(userCreateDto);
+        return userService.createExternalUser(userCreateDto);
     }
 
     @GetMapping("/{userId}")

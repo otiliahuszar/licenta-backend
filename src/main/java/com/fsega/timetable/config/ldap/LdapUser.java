@@ -1,9 +1,12 @@
 package com.fsega.timetable.config.ldap;
 
+import com.fsega.timetable.model.enums.Role;
+
 import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class LdapUser {
@@ -11,6 +14,7 @@ public class LdapUser {
     private String firstName;
     private String lastName;
     private String username;
-    private String password;
+    private String email;
+    private Role role;
 
 }

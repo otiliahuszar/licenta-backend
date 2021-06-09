@@ -1,51 +1,40 @@
 version: 1
 
-# Entry 1: dc=huszarotilia,dc=com
-dn: dc=huszarotilia,dc=com
-dc: huszarotilia
+dn: o=huszarotilia,c=com
 o: huszarotilia
 objectclass: top
-objectclass: dcObject
 objectclass: organization
+userpassword: password
 
-dn: ou=admins,dc=huszarotilia,dc=com
-objectclass: organizationalUnit
-objectclass: top
-ou: admins
-
-dn: ou=teachers,dc=huszarotilia,dc=com
-objectclass: organizationalUnit
-objectclass: top
-ou: teachers
-
-dn: ou=students,dc=huszarotilia,dc=com
-objectclass: organizationalUnit
-objectclass: top
-ou: students
-
-dn: cn=ohuszar-admin,ou=admins,dc=huszarotilia,dc=com
+dn: cn=ohuszar-admin,o=huszarotilia,c=com
 cn: ohuszar-admin
 givenname: Otilia - Admin
 sn: Huszar
 objectclass: inetOrgPerson
 objectclass: top
 uid: ohuszar-admin
-userpassword: $2a$10$rskFi7Ma1fA/z5w45j5nvumynagXj.ZycKorsIr3mJbPAHXeCaxLy
+title: ADMIN
+userpassword: password
+mail: otilia.h93+admin@gmail.com
 
-dn: cn=ohuszar-profesor,ou=teachers,dc=huszarotilia,dc=com
-cn: ohuszar
+dn: cn=ohuszar-profesor,o=huszarotilia,c=com
+cn: ohuszar-profesor
 givenname: Otilia - Profesor
 sn: Huszar
 objectclass: inetOrgPerson
 objectclass: top
 uid: ohuszar-profesor
-userpassword: $2a$10$rskFi7Ma1fA/z5w45j5nvumynagXj.ZycKorsIr3mJbPAHXeCaxLy
+title: TEACHER
+userpassword: password
+mail: otilia.h93+teacher@gmail.com
 
-dn: cn=ohuszar-student,ou=students,dc=huszarotilia,dc=com
+dn: cn=ohuszar-student,o=huszarotilia,c=com
 cn: ohuszar-student
 givenname: Otilia - Student
 sn: Huszar
 objectclass: inetOrgPerson
 objectclass: top
 uid: ohuszar-student
-userpassword: $2a$10$rskFi7Ma1fA/z5w45j5nvumynagXj.ZycKorsIr3mJbPAHXeCaxLy
+title: STUDENT
+userpassword: password
+mail: otilia.h93+student@gmail.com

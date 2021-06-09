@@ -1,6 +1,7 @@
 package com.fsega.timetable.config.security;
 
 import java.util.Date;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,30 +22,31 @@ public class JwtUtils {
     @Value("${jwt.expirationInMillis}")
     private int expirationInMillis;
 
-    public String generateJwtToken(Authentication authentication, String issuer) {
+    public String generateJwtToken(Authentication authentication) {
         UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
 
         return Jwts.builder()
                 .setSubject(userPrincipal.getUsername())
                 .setIssuedAt(new Date())
-                .setIssuer(issuer)
                 .setExpiration(new Date((new Date()).getTime() + expirationInMillis))
                 .signWith(SignatureAlgorithm.HS512, secret)
+                .setId(userPrincipal.getId().toString())
                 .compact();
     }
 
-    String getUsernameFromJwtToken(String token) {
+    String getUsername(String token) {
         return Jwts.parser()
                 .setSigningKey(secret)
                 .parseClaimsJws(token)
                 .getBody().getSubject();
     }
 
-    String getIssuer(String token) {
-        return Jwts.parser()
+    UUID getUserId(String token) {
+        String id = Jwts.parser()
                 .setSigningKey(secret)
                 .parseClaimsJws(token)
-                .getBody().getIssuer();
+                .getBody().getId();
+        return UUID.fromString(id);
     }
 
     boolean validateJwtToken(String authToken) {
