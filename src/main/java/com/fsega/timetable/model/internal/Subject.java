@@ -1,7 +1,6 @@
 package com.fsega.timetable.model.internal;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 
 import lombok.*;
 
@@ -15,9 +14,9 @@ public class Subject extends AbstractEntity {
     @Column(nullable = false)
     private String internalId;
 
-    @Column(nullable = false)
     private String name;
 
-    private String description;
+    @ManyToOne
+    private Institution institution;
 
 }

@@ -29,5 +29,5 @@ public class Course extends AbstractEntity {
     private Subject subject;
 
     @ManyToOne
-    private Teacher teacher;
+    private User teacher;
 }

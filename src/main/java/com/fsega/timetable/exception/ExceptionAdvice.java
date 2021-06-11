@@ -19,6 +19,12 @@ public class ExceptionAdvice {
         return new Error(e.getMessage());
     }
 
+    @ResponseBody
+    @ResponseStatus(code = HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(CsvException.class)
+    public Error notFoundException(CsvException e) {
+        return new Error(e.getMessage(), e.getErrors());
+    }
 
     @ResponseBody
     @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
@@ -40,7 +46,7 @@ public class ExceptionAdvice {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private static class Error {
         private String message;
-        private List<String> fieldErrors;
+        private List<String> errors;
 
         Error(String message) {
             this.message = message;

@@ -27,10 +27,13 @@ public class User extends AbstractEntity {
     @Column(nullable = false)
     private String username;
 
-    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private Role role;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Semester semester;
+
 }

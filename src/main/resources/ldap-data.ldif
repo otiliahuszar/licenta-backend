@@ -4,7 +4,11 @@ dn: o=huszarotilia,c=com
 o: huszarotilia
 objectclass: top
 objectclass: organization
-userpassword: password
+
+dn: ou=IE,o=huszarotilia,c=com
+ou: IE
+objectclass: top
+objectclass: organizationalUnit
 
 dn: cn=ohuszar-admin,o=huszarotilia,c=com
 cn: ohuszar-admin
@@ -28,7 +32,7 @@ title: TEACHER
 userpassword: password
 mail: otilia.h93+teacher@gmail.com
 
-dn: cn=ohuszar-student,o=huszarotilia,c=com
+dn: cn=ohuszar-student,ou=IE,o=huszarotilia,c=com
 cn: ohuszar-student
 givenname: Otilia - Student
 sn: Huszar
@@ -38,3 +42,5 @@ uid: ohuszar-student
 title: STUDENT
 userpassword: password
 mail: otilia.h93+student@gmail.com
+ou: CIG
+employeeNumber: 3

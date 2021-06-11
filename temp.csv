@@ -1,0 +1,14 @@
+# Specializations
+CIG,Contabilitate Informatica si de Gestiune
+FB,Finante si Banci
+IE,Informatica Economica
+MG,Management
+MK,Marketing
+# Subjects
+ALGA,Algebra
+EABD,Elemente Avansate de Baze de Date
+SO,Sisteme de Operare
+# Teachers
+ohuszar-profesor
+# Courses
+CIG,3,ALGA,ohuszar-profesor,2021-02-10,10,14

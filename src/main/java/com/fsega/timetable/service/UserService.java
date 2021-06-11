@@ -1,18 +1,22 @@
 package com.fsega.timetable.service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.fsega.timetable.config.ldap.LdapUser;
+import com.fsega.timetable.config.ldap.LdapUserRepository;
 import com.fsega.timetable.exception.BadRequestException;
 import com.fsega.timetable.exception.NotFoundException;
 import com.fsega.timetable.mapper.UserMapper;
 import com.fsega.timetable.model.enums.Role;
 import com.fsega.timetable.model.external.UserCreateDto;
 import com.fsega.timetable.model.external.UserDto;
+import com.fsega.timetable.model.internal.Semester;
 import com.fsega.timetable.model.internal.User;
+import com.fsega.timetable.repository.SemesterRepository;
 import com.fsega.timetable.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -22,6 +26,8 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final LdapUserRepository ldapUserRepository;
+    private final SemesterRepository semesterRepository;
     private final PasswordEncoder encoder;
 
     public UserDto getUser(UUID id) {
@@ -31,13 +37,26 @@ public class UserService {
     }
 
     public User createLdapUser(LdapUser ldapUser, String password) {
-        User user = userRepository.findByUsernameAndRole(ldapUser.getUsername(), ldapUser.getRole());
-        if (user != null) {
-            return user;
+        Optional<User> opt = userRepository.findByUsernameAndRole(ldapUser.getUsername(), ldapUser.getRole());
+        if (opt.isPresent()) {
+            User user = opt.get();
+
+            setSemester(user, ldapUser);
+            return userRepository.save(user);
         }
-        user = UserMapper.toEntity(ldapUser);
+        User user = UserMapper.toEntity(ldapUser);
+
         user.setPassword(encoder.encode(password));
+        setSemester(user, ldapUser);
         return userRepository.save(user);
+    }
+
+    private void setSemester(User user, LdapUser ldapUser) {
+        if (user.getRole() == Role.STUDENT) {
+            Semester semester = semesterRepository.findByStudyYearAndSpecialization_InternalId(
+                    ldapUser.getStudyYear(), ldapUser.getSpecializationId());
+            user.setSemester(semester);
+        }
     }
 
     public UserDto createExternalUser(UserCreateDto dto) {
@@ -63,6 +82,19 @@ public class UserService {
         userRepository.findByEmail(email)
                 .ifPresent(u -> {
                     throw new BadRequestException("User with email " + email + " already exists");
+                });
+    }
+
+    public Optional<User> createTeacher(String username) {
+        return ldapUserRepository.findTeacherByUsername(username)
+                .map(this::createTeacher);
+    }
+
+    private User createTeacher(LdapUser ldapTeacher) {
+        return userRepository.findByUsernameAndRole(ldapTeacher.getUsername(), Role.TEACHER)
+                .orElseGet(() -> {
+                    User teacher = UserMapper.toEntity(ldapTeacher);
+                    return userRepository.save(teacher);
                 });
     }
 

@@ -16,5 +16,7 @@ public class LdapUser {
     private String username;
     private String email;
     private Role role;
+    private String specializationId;
+    private Integer studyYear;
 
 }

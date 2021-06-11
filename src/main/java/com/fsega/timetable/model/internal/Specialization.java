@@ -14,10 +14,7 @@ public class Specialization extends AbstractEntity {
     @Column(nullable = false)
     private String internalId;
 
-    @Column(nullable = false)
     private String name;
-
-    private String description;
 
     @ManyToOne
     private Institution institution;

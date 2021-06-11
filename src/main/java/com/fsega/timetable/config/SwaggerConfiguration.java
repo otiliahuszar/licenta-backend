@@ -1,5 +1,6 @@
 package com.fsega.timetable.config;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.springframework.context.annotation.Bean;
@@ -24,6 +25,7 @@ public class SwaggerConfiguration {
                 .paths(PathSelectors.any())
                 .build()
                 .directModelSubstitute(LocalDateTime.class, String.class)
+                .directModelSubstitute(LocalDate.class, String.class)
                 .apiInfo(apiInfo());
     }
 

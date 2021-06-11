@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import com.fsega.timetable.mapper.UserMapper;
+import com.fsega.timetable.model.enums.Role;
 import com.fsega.timetable.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 public class DBAuthenticationProvider implements AuthenticationProvider {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder encoder;
 
     @Override
     public Authentication authenticate(Authentication authentication)
@@ -27,11 +29,11 @@ public class DBAuthenticationProvider implements AuthenticationProvider {
         String username = String.valueOf(auth.getPrincipal());
         String password = String.valueOf(auth.getCredentials());
 
-        UserDetails user = userRepository.findByUsername(username)
+        UserDetails user = userRepository.findByUsernameAndRole(username, Role.EXTERNAL_USER)
                 .map(UserMapper::toUserDetails)
                 .orElseThrow(() -> new UsernameNotFoundException("User with username " + username + " was not found"));
 
-        if (!passwordEncoder().matches(password, user.getPassword())) {
+        if (!encoder.matches(password, user.getPassword())) {
             throw new BadCredentialsException("Bad Credentials");
         }
         user.clearPassword();
@@ -43,8 +45,4 @@ public class DBAuthenticationProvider implements AuthenticationProvider {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 }

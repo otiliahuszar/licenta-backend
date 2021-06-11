@@ -1,8 +1,7 @@
 package com.fsega.timetable.model.internal;
 
-import java.util.List;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
 
 import lombok.*;
 
@@ -13,7 +12,7 @@ import lombok.*;
 @Entity
 public class Institution extends AbstractEntity {
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     private String description;
@@ -21,11 +20,5 @@ public class Institution extends AbstractEntity {
     private String website;
 
     private Integer foundedIn;
-
-    @OneToOne
-    private Administrator administrator;
-
-    @OneToMany(mappedBy = "institution", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Specialization> specializations;
 
 }

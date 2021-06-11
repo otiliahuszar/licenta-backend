@@ -63,7 +63,7 @@ public class UserMapper {
                 .username(entity.getUsername())
                 .email(entity.getEmail())
                 .password(entity.getPassword())
-                .authorities(List.of(new SimpleGrantedAuthority(entity.getRole().toString())))
+                .authorities(List.of(new SimpleGrantedAuthority("ROLE_" + entity.getRole().toString())))
                 .build();
     }
 
