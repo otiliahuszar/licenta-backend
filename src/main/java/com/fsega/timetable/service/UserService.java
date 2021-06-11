@@ -72,14 +72,14 @@ public class UserService {
     }
 
     private void validateUsername(String username) {
-        userRepository.findByUsername(username)
+        userRepository.findByUsernameAndRole(username, Role.EXTERNAL_USER)
                 .ifPresent(u -> {
                     throw new BadRequestException("User with username " + username + " already exists");
                 });
     }
 
     private void validateEmail(String email) {
-        userRepository.findByEmail(email)
+        userRepository.findByEmailAndRole(email, Role.EXTERNAL_USER)
                 .ifPresent(u -> {
                     throw new BadRequestException("User with email " + email + " already exists");
                 });
