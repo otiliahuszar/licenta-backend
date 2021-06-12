@@ -3,18 +3,21 @@ package com.fsega.timetable.service;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.map.MultiKeyMap;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fsega.timetable.exception.CsvException;
+import com.fsega.timetable.mapper.CourseMapper;
 import com.fsega.timetable.model.external.*;
 import com.fsega.timetable.model.internal.*;
 
 import lombok.RequiredArgsConstructor;
 
 import static java.lang.String.format;
+import static java.util.Comparator.comparing;
 
 @Service
 @RequiredArgsConstructor
@@ -36,15 +39,19 @@ public class TimetableService {
     private final CourseService courseService;
 
     @Transactional
-    public void createTimetable(LocalDate semesterStart, LocalDate semesterEnd, byte[] content) throws IOException {
+    public List<CourseFullDto> createTimetable(LocalDate semesterStart, LocalDate semesterEnd,
+                                               byte[] content) throws IOException {
         cleanup();
         writeContentToTempFile(content);
         splitAndHandleCsvSections(semesterStart, semesterEnd);
 
-
         if (errors.size() > 0) {
             throw new CsvException("Errors while processing CSV file", errors);
         }
+        return courses.stream()
+                .sorted(comparing(Course::getDate).thenComparing(Course::getStartHour))
+                .map(CourseMapper::toFullDto)
+                .collect(Collectors.toList());
     }
 
     private void writeContentToTempFile(byte[] content) throws IOException {

@@ -36,4 +36,8 @@ public class User extends AbstractEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Semester semester;
 
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
 }
