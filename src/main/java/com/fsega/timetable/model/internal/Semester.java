@@ -1,11 +1,10 @@
 package com.fsega.timetable.model.internal;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.*;
-
-import org.springframework.stereotype.Service;
 
 import lombok.*;
 
@@ -29,7 +28,13 @@ public class Semester extends AbstractEntity {
     @ManyToOne
     private Specialization specialization;
 
-    @OneToMany(mappedBy = "semester")
+    @ManyToMany(mappedBy = "semesters")
     private List<User> students;
 
+    public List<User> getStudents() {
+        if (students == null) {
+            students = new ArrayList<>();
+        }
+        return students;
+    }
 }

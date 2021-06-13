@@ -55,7 +55,7 @@ public class UserService {
         if (user.getRole() == Role.STUDENT) {
             Semester semester = semesterRepository.findByStudyYearAndSpecialization_InternalId(
                     ldapUser.getStudyYear(), ldapUser.getSpecializationId());
-            user.setSemester(semester);
+            user.addSemester(semester);
         }
     }
 

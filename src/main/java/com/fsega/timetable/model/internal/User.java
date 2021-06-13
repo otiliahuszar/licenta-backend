@@ -1,5 +1,8 @@
 package com.fsega.timetable.model.internal;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.*;
 
 import com.fsega.timetable.model.enums.Role;
@@ -33,11 +36,27 @@ public class User extends AbstractEntity {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Semester semester;
+    @ManyToMany
+    @JoinTable(
+            name = "semester_students",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id"))
+    private List<Semester> semesters;
 
     public String getFullName() {
         return firstName + " " + lastName;
+    }
+
+    public List<Semester> getSemesters() {
+        if (semesters == null) {
+            semesters = new ArrayList<>();
+        }
+        return semesters;
+    }
+
+    public void addSemester(Semester semester) {
+        getSemesters().add(semester);
+        semester.getStudents().add(this);
     }
 
 }
