@@ -21,18 +21,9 @@ public class CourseMapper {
                 .startHour(course.getStartHour())
                 .endHour(course.getEndHour())
                 .studyYear(course.getSemester().getStudyYear())
-                .specialization(IdNameDto.builder()
-                        .id(spec.getId())
-                        .name(spec.getInternalId())
-                        .build())
-                .subject(IdNameDto.builder()
-                        .id(course.getSubject().getId())
-                        .name(course.getSubject().getInternalId())
-                        .build())
-                .teacher(IdNameDto.builder()
-                        .id(course.getTeacher().getId())
-                        .name(course.getTeacher().getFullName())
-                        .build())
+                .specialization(SpecializationMapper.toIdNameDto(spec))
+                .subject(SubjectMapper.toIdNameDto(course.getSubject()))
+                .teacher(UserMapper.toIdNameDto(course.getTeacher()))
                 .build();
     }
 }

@@ -1,5 +1,6 @@
 package com.fsega.timetable.mapper;
 
+import com.fsega.timetable.model.external.IdNameDto;
 import com.fsega.timetable.model.external.SpecializationDto;
 import com.fsega.timetable.model.internal.Institution;
 import com.fsega.timetable.model.internal.Specialization;
@@ -17,6 +18,13 @@ public class SpecializationMapper {
                 .internalId(dto.getInternalId())
                 .name(dto.getName())
                 .institution(institution)
+                .build();
+    }
+
+    public static IdNameDto toIdNameDto(Specialization spec) {
+        return IdNameDto.builder()
+                .id(spec.getId())
+                .name(spec.getInternalId())
                 .build();
     }
 }

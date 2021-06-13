@@ -36,6 +36,9 @@ public class User extends AbstractEntity {
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
+    @ManyToOne
+    private Institution institution;
+
     @ManyToMany
     @JoinTable(
             name = "semester_students",

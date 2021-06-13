@@ -1,7 +1,9 @@
 package com.fsega.timetable.mapper;
 
+import com.fsega.timetable.model.external.IdNameDto;
 import com.fsega.timetable.model.external.SubjectDto;
 import com.fsega.timetable.model.internal.Institution;
+import com.fsega.timetable.model.internal.Specialization;
 import com.fsega.timetable.model.internal.Subject;
 
 import lombok.experimental.UtilityClass;
@@ -17,6 +19,13 @@ public class SubjectMapper {
                 .internalId(dto.getInternalId())
                 .name(dto.getName())
                 .institution(institution)
+                .build();
+    }
+
+    public static IdNameDto toIdNameDto(Subject subject) {
+        return IdNameDto.builder()
+                .id(subject.getId())
+                .name(subject.getInternalId())
                 .build();
     }
 }

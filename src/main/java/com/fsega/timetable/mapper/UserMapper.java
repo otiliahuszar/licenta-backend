@@ -2,6 +2,7 @@ package com.fsega.timetable.mapper;
 
 import java.util.List;
 
+import com.fsega.timetable.model.external.IdNameDto;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.fsega.timetable.config.ldap.LdapUser;
@@ -64,6 +65,13 @@ public class UserMapper {
                 .email(entity.getEmail())
                 .password(entity.getPassword())
                 .authorities(List.of(new SimpleGrantedAuthority("ROLE_" + entity.getRole().toString())))
+                .build();
+    }
+
+    public static IdNameDto toIdNameDto(User user) {
+        return IdNameDto.builder()
+                .id(user.getId())
+                .name(user.getFullName())
                 .build();
     }
 

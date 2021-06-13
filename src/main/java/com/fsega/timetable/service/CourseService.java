@@ -1,5 +1,6 @@
 package com.fsega.timetable.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -32,8 +33,9 @@ public class CourseService {
         return repository.save(course);
     }
 
-    public List<CourseFullDto> searchCourses(UUID specializationId, UUID subjectId, UUID teacherId) {
-        return repository.searchCourses(specializationId, subjectId, teacherId).stream()
+    public List<CourseFullDto> searchCourses(UUID specializationId, UUID subjectId, UUID teacherId,
+                                             LocalDateTime start, LocalDateTime end) {
+        return repository.searchCourses(specializationId, subjectId, teacherId, start, end).stream()
                 .map(CourseMapper::toFullDto)
                 .collect(Collectors.toList());
     }
