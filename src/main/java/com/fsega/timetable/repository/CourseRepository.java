@@ -2,6 +2,7 @@ package com.fsega.timetable.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,11 +18,13 @@ public interface CourseRepository extends JpaRepository<Course, UUID> {
             "(CAST(:subjectId AS text) IS NULL OR c.subject.id = :subjectId) AND " +
             "(CAST(:teacherId AS text) IS NULL OR c.teacher.id = :teacherId) AND " +
             "(CAST(:startDate AS text) IS NULL OR c.date >= :startDate) AND " +
-            "(CAST(:endDate AS text) IS NULL OR c.date <= :endDate) " +
+            "(CAST(:endDate AS text) IS NULL OR c.date <= :endDate) AND " +
+            "(CAST(:studyYear AS text) IS NULL OR c.semester.studyYear = :studyYear) " +
             "ORDER BY c.date ASC, c.startHour ASC")
     List<Course> searchCourses(@Param("specializationId") UUID specializationId,
                                @Param("subjectId") UUID subjectId,
                                @Param("teacherId") UUID teacherId,
                                @Param("startDate") LocalDateTime start,
-                               @Param("endDate") LocalDateTime end);
+                               @Param("endDate") LocalDateTime end,
+                               @Param("studyYear") Integer studyYear);
 }

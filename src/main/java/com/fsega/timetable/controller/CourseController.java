@@ -4,8 +4,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import com.fsega.timetable.config.security.UserDetails;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.fsega.timetable.model.external.CourseFullDto;
@@ -20,14 +23,16 @@ public class CourseController {
 
     private final CourseService courseService;
 
-    @GetMapping("/admin")
-    @Secured("ROLE_ADMIN")
+    @GetMapping
+    @Secured({"ROLE_ADMIN", "ROLE_TEACHER", "ROLE_STUDENT"})
     public List<CourseFullDto> searchCourses(
             @RequestParam(required = false) UUID specializationId,
             @RequestParam(required = false) UUID subjectId,
             @RequestParam(required = false) UUID teacherId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
-        return courseService.searchCourses(specializationId, subjectId, teacherId, start, end);
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) auth.getPrincipal();
+        return courseService.searchCourses(userDetails.getId(), specializationId, subjectId, teacherId, start, end);
     }
 }

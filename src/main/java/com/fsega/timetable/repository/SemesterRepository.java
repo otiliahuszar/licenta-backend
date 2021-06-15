@@ -19,5 +19,5 @@ public interface SemesterRepository extends JpaRepository<Semester, UUID> {
                                                @Param("studyYear") Integer studyYear,
                                                @Param("specializationId") UUID specializationId);
 
-    Semester findByStudyYearAndSpecialization_InternalId(Integer studyYear, String internalId);
+    Optional<Semester> findByStudyYearAndSpecialization_InternalId(Integer studyYear, String internalId);
 }

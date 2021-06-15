@@ -2,6 +2,7 @@ package com.fsega.timetable.model.internal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.*;
 
@@ -55,6 +56,10 @@ public class User extends AbstractEntity {
             semesters = new ArrayList<>();
         }
         return semesters;
+    }
+
+    public Optional<Semester> getSemester() {
+        return getSemesters().stream().findFirst();
     }
 
     public void addSemester(Semester semester) {
