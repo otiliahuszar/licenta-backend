@@ -25,7 +25,8 @@ public class SubjectMapper {
     public static IdNameDto toIdNameDto(Subject subject) {
         return IdNameDto.builder()
                 .id(subject.getId())
-                .name(subject.getInternalId())
+                .internalId(subject.getInternalId())
+                .name(subject.getName())
                 .build();
     }
 }

@@ -5,42 +5,111 @@ o: huszarotilia
 objectclass: top
 objectclass: organization
 
+dn: ou=CIG,o=huszarotilia,c=com
+ou: CIG
+objectclass: top
+objectclass: organizationalUnit
+
 dn: ou=IE,o=huszarotilia,c=com
 ou: IE
 objectclass: top
 objectclass: organizationalUnit
 
-dn: cn=ohuszar-admin,o=huszarotilia,c=com
-cn: ohuszar-admin
-givenname: Otilia - Admin
+dn: ou=MK,o=huszarotilia,c=com
+ou: MK
+objectclass: top
+objectclass: organizationalUnit
+
+dn: cn=admin,o=huszarotilia,c=com
+cn: admin
+givenname: Admin
 sn: Huszar
 objectclass: inetOrgPerson
 objectclass: top
-uid: ohuszar-admin
+uid: admin
 title: ADMIN
 userpassword: password
 mail: otilia.h93+admin@gmail.com
 
-dn: cn=ohuszar-profesor,o=huszarotilia,c=com
-cn: ohuszar-profesor
-givenname: Otilia - Profesor
+dn: cn=profesor1,o=huszarotilia,c=com
+cn: profesor1
+givenname: Profesor1
 sn: Huszar
 objectclass: inetOrgPerson
 objectclass: top
-uid: ohuszar-profesor
+uid: profesor1
 title: TEACHER
 userpassword: password
-mail: otilia.h93+teacher@gmail.com
+mail: otilia.h93+profesor1@gmail.com
 
-dn: cn=ohuszar-student,ou=IE,o=huszarotilia,c=com
-cn: ohuszar-student
-givenname: Otilia - Student
+dn: cn=profesor2,o=huszarotilia,c=com
+cn: profesor2
+givenname: Profesor2
 sn: Huszar
 objectclass: inetOrgPerson
 objectclass: top
-uid: ohuszar-student
+uid: profesor2
+title: TEACHER
+userpassword: password
+mail: otilia.h93+profesor2@gmail.com
+
+dn: cn=profesor3,o=huszarotilia,c=com
+cn: profesor3
+givenname: Profesor3
+sn: Huszar
+objectclass: inetOrgPerson
+objectclass: top
+uid: profesor3
+title: TEACHER
+userpassword: password
+mail: otilia.h93+profesor3@gmail.com
+
+dn: cn=profesor4,o=huszarotilia,c=com
+cn: profesor4
+givenname: Profesor4
+sn: Huszar
+objectclass: inetOrgPerson
+objectclass: top
+uid: profesor4
+title: TEACHER
+userpassword: password
+mail: otilia.h93+profesor4@gmail.com
+
+dn: cn=student-cig,ou=CIG,o=huszarotilia,c=com
+cn: student-cig
+givenname: Student CIG
+sn: Huszar
+objectclass: inetOrgPerson
+objectclass: top
+uid: student-cig
 title: STUDENT
 userpassword: password
-mail: otilia.h93+student@gmail.com
+mail: otilia.h93+studentcig@gmail.com
 ou: CIG
+employeeNumber: 3
+
+dn: cn=student-ie,ou=IE,o=huszarotilia,c=com
+cn: student-ie
+givenname: Student IE
+sn: Huszar
+objectclass: inetOrgPerson
+objectclass: top
+uid: student-ie
+title: STUDENT
+userpassword: password
+mail: otilia.h93+studentie@gmail.com
+ou: IE
+employeeNumber: 3
+
+dn: cn=student-mk,ou=MK,o=huszarotilia,c=com
+cn: student-mk
+givenname: Student MK
+sn: Huszar
+objectclass: inetOrgPerson
+objectclass: top
+uid: student-mk
+title: STUDENT
+userpassword: password
+mail: otilia.h93+studentmk@gmail.com
+ou: MK
 employeeNumber: 3

@@ -11,6 +11,7 @@ import lombok.*;
 public class IdNameDto {
 
     private UUID id;
+    private String internalId;
     private String name;
 
 }

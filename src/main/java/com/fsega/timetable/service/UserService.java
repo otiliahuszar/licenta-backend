@@ -1,12 +1,12 @@
 package com.fsega.timetable.service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fsega.timetable.model.external.IdNameDto;
 import com.fsega.timetable.model.internal.Institution;
+import com.fsega.timetable.model.internal.Subject;
+import com.fsega.timetable.repository.CourseRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +34,7 @@ public class UserService {
     private final SemesterRepository semesterRepository;
     private final PasswordEncoder encoder;
     private final InstitutionService institutionService;
+    private final CourseRepository courseRepository;
 
     public UserDto getUser(UUID id) {
         return userRepository.findById(id)
@@ -102,10 +103,27 @@ public class UserService {
                 });
     }
 
-    public List<IdNameDto> getTeachers() {
+    public List<IdNameDto> getTeachers(UUID userId) {
         Institution institution = institutionService.getInstitution();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " was not found"));
+        List<User> teachers = new ArrayList<>();
 
-        return userRepository.findByRoleAndInstitutionOrderByLastNameAscFirstNameAsc(Role.TEACHER, institution).stream()
+        switch (user.getRole()) {
+            case ADMIN:
+                teachers = userRepository.findByRoleAndInstitutionOrderByLastNameAscFirstNameAsc(Role.TEACHER, institution);
+                break;
+            case STUDENT:
+                Semester sem = user.getSemester().orElse(null);
+                if (sem == null) {
+                    break;
+                }
+                Set<UUID> teacherIds = courseRepository.findAllTeacherIdsForSpecialization(
+                        sem.getSpecialization().getId(), sem.getStudyYear());
+                teachers = userRepository.findByInstitutionAndIdInOrderByLastNameAscFirstNameAsc(institution, teacherIds);
+                break;
+        }
+        return teachers.stream()
                 .map(UserMapper::toIdNameDto)
                 .collect(Collectors.toList());
     }

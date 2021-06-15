@@ -24,7 +24,8 @@ public class SpecializationMapper {
     public static IdNameDto toIdNameDto(Specialization spec) {
         return IdNameDto.builder()
                 .id(spec.getId())
-                .name(spec.getInternalId())
+                .internalId(spec.getInternalId())
+                .name(spec.getName())
                 .build();
     }
 }

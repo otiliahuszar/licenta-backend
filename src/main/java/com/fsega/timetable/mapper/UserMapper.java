@@ -71,6 +71,7 @@ public class UserMapper {
     public static IdNameDto toIdNameDto(User user) {
         return IdNameDto.builder()
                 .id(user.getId())
+                .internalId(user.getUsername())
                 .name(user.getFullName())
                 .build();
     }

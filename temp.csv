@@ -1,14 +1,52 @@
 # Specializations
-CIG,Contabilitate Informatica si de Gestiune
-FB,Finante si Banci
+CIG,Contabilitate si Informatica de Gestiune
 IE,Informatica Economica
-MG,Management
 MK,Marketing
 # Subjects
-ALGA,Algebra
-EABD,Elemente Avansate de Baze de Date
-SO,Sisteme de Operare
+AGT,Agroturism
+BI,Business Intelligence
+CAP,Criptografie Aplicata
+EN2,Comunicare in Afaceri 2
+ITP,Instrumente si Tehnici de Promovare
+MCT,Managementul Calitatii Totale
+MI,Managementul Investitiilor
+MKT,Marketing in Turism
+TE,Targuri si Expozitii
+TEI,Tranzactii Economice Internationale
+WS,Web Semantic
 # Teachers
-ohuszar-profesor
+profesor1
+profesor2
+profesor3
+profesor4
 # Courses
-CIG,3,ALGA,ohuszar-profesor,2021-02-10,10,14
+CIG,3,AGT,profesor1,2021-07-17,8,12
+CIG,3,AGT,profesor1,2021-07-21,10,14
+CIG,3,EN2,profesor2,2021-07-17,12,16
+CIG,3,EN2,profesor2,2021-07-22,16,20
+CIG,3,ITP,profesor2,2021-07-18,8,12
+CIG,3,ITP,profesor2,2021-07-21,14,18
+CIG,3,MCT,profesor1,2021-08-01,8,12
+CIG,3,MCT,profesor1,2021-07-27,8,12
+CIG,3,TEI,profesor1,2021-08-01,12,16
+CIG,3,TEI,profesor1,2021-07-28,8,12
+IE,3,BI,profesor3,2021-08-01,8,12
+IE,3,BI,profesor3,2021-08-07,12,14
+IE,3,EN2,profesor2,2021-07-17,16,20
+IE,3,EN2,profesor2,2021-07-22,12,16
+IE,3,ITP,profesor2,2021-07-18,12,16
+IE,3,ITP,profesor2,2021-07-21,10,14
+IE,3,CAP,profesor3,2021-08-01,12,14
+IE,3,CAP,profesor3,2021-08-07,8,12
+IE,3,WS,profesor3,2021-08-03,12,16
+IE,3,WS,profesor3,2021-07-22,8,12
+MK,3,MI,profesor4,2021-07-24,8,12
+MK,3,MI,profesor4,2021-08-08,12,14
+MK,3,EN2,profesor2,2021-07-17,8,12
+MK,3,EN2,profesor2,2021-07-22,8,12
+MK,3,ITP,profesor2,2021-07-18,16,20
+MK,3,ITP,profesor2,2021-07-23,8,12
+MK,3,MKT,profesor4,2021-07-24,12,14
+MK,3,MKT,profesor4,2021-08-08,8,12
+MK,3,TE,profesor4,2021-08-04,12,16
+MK,3,TE,profesor4,2021-08-08,12,14

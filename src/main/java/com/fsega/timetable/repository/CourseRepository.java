@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import com.fsega.timetable.model.internal.Specialization;
+import org.hibernate.validator.constraints.ParameterScriptAssert;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -27,4 +29,20 @@ public interface CourseRepository extends JpaRepository<Course, UUID> {
                                @Param("startDate") LocalDateTime start,
                                @Param("endDate") LocalDateTime end,
                                @Param("studyYear") Integer studyYear);
+
+    @Query("SELECT c.semester.specialization.id FROM Course c WHERE c.teacher.id = :teacherId")
+    Set<UUID> findSpecializationIdsForTeacher(@Param("teacherId") UUID teacherId);
+
+    @Query("SELECT c.subject.id FROM Course c WHERE c.teacher.id = :teacherId")
+    Set<UUID> findAllSubjectIdsForTeacher(@Param("teacherId") UUID teacherId);
+
+    @Query("SELECT c.subject.id FROM Course c WHERE c.semester.specialization.id = :specializationId AND " +
+            "c.semester.studyYear = :studyYear")
+    Set<UUID> findAllSubjectIdsForSpecialization(@Param("specializationId") UUID specializationId,
+                                                 @Param("studyYear") Integer studyYear);
+
+    @Query("SELECT c.teacher.id FROM Course c WHERE c.semester.specialization.id = :specializationId AND " +
+            "c.semester.studyYear = :studyYear")
+    Set<UUID> findAllTeacherIdsForSpecialization(@Param("specializationId") UUID specializationId,
+                                                 @Param("studyYear") Integer studyYear);
 }
