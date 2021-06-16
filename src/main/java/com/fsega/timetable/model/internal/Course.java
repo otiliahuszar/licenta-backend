@@ -7,6 +7,7 @@ import javax.persistence.*;
 import lombok.*;
 
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,4 +31,18 @@ public class Course extends AbstractEntity {
 
     @ManyToOne
     private User teacher;
+
+    private String title;
+
+    @Column(columnDefinition = "text")
+    private String description;
+
+    @Column(length = 1000)
+    private String location;
+
+    @Column(length = 1000)
+    private String resources;
+
+    private boolean isPublic;
+
 }

@@ -1,25 +1,33 @@
 package com.fsega.timetable.model.external;
 
-import java.time.LocalDate;
-import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
-import lombok.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
 
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
-public class CourseFullDto {
+public class CourseEditDto {
 
-    private UUID id;
+    @NotNull
     private LocalDate date;
-    private Integer startHour;
-    private Integer endHour;
-    private Integer studyYear;
 
-    private IdNameDto specialization;
-    private IdNameDto subject;
-    private IdNameDto teacher;
+    @NotNull
+    @Min(0)
+    @Max(23)
+    private Integer startHour;
+
+    @NotNull
+    @Min(1)
+    @Max(24)
+    private Integer endHour;
 
     private String title;
     private String description;

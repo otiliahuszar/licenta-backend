@@ -17,6 +17,7 @@ public class CourseMapper {
         Specialization spec = course.getSemester().getSpecialization();
 
         return CourseFullDto.builder()
+                .id(course.getId())
                 .date(course.getDate())
                 .startHour(course.getStartHour())
                 .endHour(course.getEndHour())
@@ -24,6 +25,11 @@ public class CourseMapper {
                 .specialization(SpecializationMapper.toIdNameDto(spec))
                 .subject(SubjectMapper.toIdNameDto(course.getSubject()))
                 .teacher(UserMapper.toIdNameDto(course.getTeacher()))
+                .title(course.getTitle())
+                .description(course.getDescription())
+                .location(course.getLocation())
+                .resources(course.getResources())
+                .isPublic(course.isPublic())
                 .build();
     }
 }

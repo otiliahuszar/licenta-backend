@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import com.fsega.timetable.exception.NotFoundException;
 import com.fsega.timetable.mapper.UserMapper;
+import com.fsega.timetable.model.external.CourseEditDto;
 import com.fsega.timetable.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +40,28 @@ public class CourseService {
                 .subject(subject)
                 .build();
         return repository.save(course);
+    }
+
+    public boolean deleteCourse(UUID courseId) {
+        repository.deleteById(courseId);
+        return true;
+    }
+
+    public boolean updateCourse(UUID courseId, CourseEditDto dto) {
+        Course course = repository.findById(courseId)
+                .orElseThrow(() -> new NotFoundException("Course with id " + courseId + " was not found"));
+
+        course.setDate(dto.getDate());
+        course.setStartHour(dto.getStartHour());
+        course.setEndHour(dto.getEndHour());
+        course.setTitle(dto.getTitle());
+        course.setDescription(dto.getDescription());
+        course.setLocation(dto.getLocation());
+        course.setResources(dto.getResources());
+        course.setPublic(dto.getIsPublic());
+
+        repository.save(course);
+        return true;
     }
 
     public List<CourseFullDto> searchCourses(UUID userId, UUID specializationId, UUID subjectId, UUID teacherId,

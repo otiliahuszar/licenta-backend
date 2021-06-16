@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import com.fsega.timetable.config.security.UserDetails;
+import com.fsega.timetable.model.external.CourseEditDto;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
@@ -15,6 +16,8 @@ import com.fsega.timetable.model.external.CourseFullDto;
 import com.fsega.timetable.service.CourseService;
 
 import lombok.RequiredArgsConstructor;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,5 +37,18 @@ public class CourseController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) auth.getPrincipal();
         return courseService.searchCourses(userDetails.getId(), specializationId, subjectId, teacherId, start, end);
+    }
+
+    @DeleteMapping("/{courseId}")
+    @Secured("ROLE_ADMIN")
+    public boolean deleteCourse(@PathVariable UUID courseId) {
+        return courseService.deleteCourse(courseId);
+    }
+
+    @PutMapping("/{courseId}")
+    @Secured({"ROLE_ADMIN", "ROLE_TEACHER"})
+    public boolean updateCourse(@PathVariable UUID courseId,
+                                @RequestBody @Valid CourseEditDto dto) {
+        return courseService.updateCourse(courseId, dto);
     }
 }
