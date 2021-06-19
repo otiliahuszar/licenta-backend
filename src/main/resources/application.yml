@@ -27,4 +27,4 @@ institution:
 
 jwt:
   secret: jWtS3cR3t
-  expirationInMillis: 3600000
+  expirationInMillis: 3600000 # 1 hour

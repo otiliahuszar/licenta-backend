@@ -1,6 +1,7 @@
 package com.fsega.timetable.model.internal;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -44,5 +45,8 @@ public class Course extends AbstractEntity {
     private String resources;
 
     private boolean isPublic;
+
+    @ManyToMany(mappedBy = "publicCourses")
+    private List<User> students;
 
 }

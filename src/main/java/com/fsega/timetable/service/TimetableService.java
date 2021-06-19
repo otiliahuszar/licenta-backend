@@ -23,11 +23,10 @@ public class TimetableService {
     private final String tempFile = "temp.csv";
     private final List<String> errors = new ArrayList<>();
 
-    private Map<String, Specialization> specializations = new HashMap<>();
-    private Map<String, Subject> subjects = new HashMap<>();
-    private Map<String, User> teachers = new HashMap<>();
-    private MultiKeyMap<String, Semester> semesters = new MultiKeyMap<>();
-    private List<Course> courses = new ArrayList<>();
+    private final Map<String, Specialization> specializations = new HashMap<>();
+    private final Map<String, Subject> subjects = new HashMap<>();
+    private final Map<String, User> teachers = new HashMap<>();
+    private final MultiKeyMap<String, Semester> semesters = new MultiKeyMap<>();
 
     private final SpecializationService specializationService;
     private final SubjectService subjectService;
@@ -176,7 +175,7 @@ public class TimetableService {
             sem = semesterService.createSemester(startDate, endDate, dto.getStudyYear(), spec);
             semesters.put(spec.getInternalId(), studyYear, sem);
         }
-        courses.add(courseService.createCourse(dto, sem, teacher, subject));
+        courseService.createCourse(dto, sem, teacher, subject);
     }
 
     private void cleanup() {
@@ -184,7 +183,6 @@ public class TimetableService {
         specializations.clear();
         subjects.clear();
         teachers.clear();
-        courses.clear();
         semesters.clear();
     }
 }

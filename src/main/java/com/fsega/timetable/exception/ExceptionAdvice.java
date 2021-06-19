@@ -22,15 +22,8 @@ public class ExceptionAdvice {
     @ResponseBody
     @ResponseStatus(code = HttpStatus.BAD_REQUEST)
     @ExceptionHandler(CsvException.class)
-    public Error notFoundException(CsvException e) {
+    public Error csvException(CsvException e) {
         return new Error(e.getMessage(), e.getErrors());
-    }
-
-    @ResponseBody
-    @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(UnauthorizedException.class)
-    public Error unauthorizedException(UnauthorizedException e) {
-        return new Error(e.getMessage());
     }
 
     @ResponseBody

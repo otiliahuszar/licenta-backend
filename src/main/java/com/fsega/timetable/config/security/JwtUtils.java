@@ -34,13 +34,6 @@ public class JwtUtils {
                 .compact();
     }
 
-    String getUsername(String token) {
-        return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody().getSubject();
-    }
-
     UUID getUserId(String token) {
         String id = Jwts.parser()
                 .setSigningKey(secret)

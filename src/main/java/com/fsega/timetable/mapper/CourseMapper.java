@@ -1,9 +1,9 @@
 package com.fsega.timetable.mapper;
 
+import com.fsega.timetable.model.external.CourseDto;
 import com.fsega.timetable.model.external.CourseFullDto;
 import com.fsega.timetable.model.external.IdNameDto;
-import com.fsega.timetable.model.internal.Course;
-import com.fsega.timetable.model.internal.Specialization;
+import com.fsega.timetable.model.internal.*;
 
 import lombok.experimental.UtilityClass;
 
@@ -30,6 +30,17 @@ public class CourseMapper {
                 .location(course.getLocation())
                 .resources(course.getResources())
                 .isPublic(course.isPublic())
+                .build();
+    }
+
+    public static Course toEntity(CourseDto dto, Semester semester, User teacher, Subject subject) {
+        return Course.builder()
+                .date(dto.getDate())
+                .startHour(dto.getStartHour())
+                .endHour(dto.getEndHour())
+                .semester(semester)
+                .teacher(teacher)
+                .subject(subject)
                 .build();
     }
 }

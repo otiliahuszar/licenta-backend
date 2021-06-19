@@ -1,5 +1,6 @@
 package com.fsega.timetable.repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -26,8 +27,8 @@ public interface CourseRepository extends JpaRepository<Course, UUID> {
     List<Course> searchCourses(@Param("specializationId") UUID specializationId,
                                @Param("subjectId") UUID subjectId,
                                @Param("teacherId") UUID teacherId,
-                               @Param("startDate") LocalDateTime start,
-                               @Param("endDate") LocalDateTime end,
+                               @Param("startDate") LocalDate start,
+                               @Param("endDate") LocalDate end,
                                @Param("studyYear") Integer studyYear);
 
     @Query("SELECT c.semester.specialization.id FROM Course c WHERE c.teacher.id = :teacherId")
@@ -45,4 +46,15 @@ public interface CourseRepository extends JpaRepository<Course, UUID> {
             "c.semester.studyYear = :studyYear")
     Set<UUID> findAllTeacherIdsForSpecialization(@Param("specializationId") UUID specializationId,
                                                  @Param("studyYear") Integer studyYear);
+
+    @Query("SELECT c FROM Course c WHERE " +
+            "((:searchForSpecialization = TRUE AND c.semester.specialization.id = :specializationId) OR " +
+            "(:searchForSubject = TRUE AND c.subject.id = :subjectId)) AND " +
+            "c.teacher.id = :teacherId AND c.date >= NOW() AND c.date <= :endDate")
+    Set<Course> searchCoursesForMultipleEdit(@Param("searchForSpecialization") boolean searchForSpecialization,
+                                              @Param("specializationId") UUID specializationId,
+                                              @Param("searchForSubject") boolean searchForSubject,
+                                              @Param("subjectId") UUID subjectId,
+                                              @Param("teacherId") UUID teacherId,
+                                              @Param("endDate") LocalDate end);
 }

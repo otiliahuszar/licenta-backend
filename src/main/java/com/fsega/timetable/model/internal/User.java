@@ -44,8 +44,16 @@ public class User extends AbstractEntity {
     @JoinTable(
             name = "semester_students",
             joinColumns = @JoinColumn(name = "student_id"),
-            inverseJoinColumns = @JoinColumn(name = "course_id"))
+            inverseJoinColumns = @JoinColumn(name = "semesterId"))
     private List<Semester> semesters;
+
+    @ManyToMany
+    @JoinTable(
+            name = "public_course_enrollments",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "course_id"))
+    private List<Course> publicCourses;
+
 
     public String getFullName() {
         return firstName + " " + lastName;
@@ -65,6 +73,13 @@ public class User extends AbstractEntity {
     public void addSemester(Semester semester) {
         getSemesters().add(semester);
         semester.getStudents().add(this);
+    }
+
+    public List<Course> getPublicCourses() {
+        if (publicCourses == null) {
+            publicCourses = new ArrayList<>();
+        }
+        return publicCourses;
     }
 
 }

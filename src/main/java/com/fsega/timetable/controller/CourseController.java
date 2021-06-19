@@ -1,11 +1,13 @@
 package com.fsega.timetable.controller;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 import com.fsega.timetable.config.security.UserDetails;
 import com.fsega.timetable.model.external.CourseEditDto;
+import com.fsega.timetable.model.external.CourseMultipleEditDto;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
@@ -32,8 +34,8 @@ public class CourseController {
             @RequestParam(required = false) UUID specializationId,
             @RequestParam(required = false) UUID subjectId,
             @RequestParam(required = false) UUID teacherId,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime start,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime end) {
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) auth.getPrincipal();
         return courseService.searchCourses(userDetails.getId(), specializationId, subjectId, teacherId, start, end);
@@ -50,5 +52,14 @@ public class CourseController {
     public boolean updateCourse(@PathVariable UUID courseId,
                                 @RequestBody @Valid CourseEditDto dto) {
         return courseService.updateCourse(courseId, dto);
+    }
+
+    @PutMapping("/{courseId}/multiple")
+    @Secured("ROLE_TEACHER")
+    public Integer updateMultipleCourses(@PathVariable UUID courseId,
+                                         @RequestBody @Valid CourseMultipleEditDto dto) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) auth.getPrincipal();
+        return courseService.updateMultipleCourses(userDetails.getId(), courseId, dto);
     }
 }
