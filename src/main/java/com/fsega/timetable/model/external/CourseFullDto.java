@@ -17,6 +17,7 @@ public class CourseFullDto {
     private Integer endHour;
     private Integer studyYear;
 
+    private IdNameDto institution;
     private IdNameDto specialization;
     private IdNameDto subject;
     private IdNameDto teacher;
@@ -26,5 +27,7 @@ public class CourseFullDto {
     private String location;
     private String resources;
     private Boolean isPublic;
+
+    private boolean enrolled;
 
 }

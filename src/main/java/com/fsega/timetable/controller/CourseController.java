@@ -29,16 +29,38 @@ public class CourseController {
     private final CourseService courseService;
 
     @GetMapping
-    @Secured({"ROLE_ADMIN", "ROLE_TEACHER", "ROLE_STUDENT"})
     public List<CourseFullDto> searchCourses(
             @RequestParam(required = false) UUID specializationId,
             @RequestParam(required = false) UUID subjectId,
             @RequestParam(required = false) UUID teacherId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end,
+            @RequestParam(required = false) Boolean isPublic) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails) auth.getPrincipal();
-        return courseService.searchCourses(userDetails.getId(), specializationId, subjectId, teacherId, start, end);
+        return courseService.searchCourses(userDetails.getId(), specializationId, subjectId, teacherId, start, end, isPublic);
+    }
+
+    @GetMapping("/public")
+    @Secured({"ROLE_STUDENT", "ROLE_EXTERNAL_USER"})
+    public List<CourseFullDto> searchPublicCourses(@RequestParam(required = false) UUID institutionId,
+                                                   @RequestParam(required = false) UUID specializationId,
+                                                   @RequestParam(required = false) UUID subjectId,
+                                                   @RequestParam(required = false) UUID teacherId,
+                                                   @RequestParam(required = false) String title,
+                                                   @RequestParam(required = false) String description) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) auth.getPrincipal();
+        return courseService.searchPublicCourses(userDetails.getId(), institutionId, specializationId, subjectId,
+                teacherId, title, description);
+    }
+
+    @PostMapping("/{courseId}/enroll")
+    @Secured({"ROLE_STUDENT", "ROLE_EXTERNAL_USER"})
+    public boolean enrollToCourse(@PathVariable UUID courseId) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) auth.getPrincipal();
+        return courseService.enrollToCourse(userDetails.getId(), courseId);
     }
 
     @DeleteMapping("/{courseId}")

@@ -1,5 +1,8 @@
 package com.fsega.timetable.service;
 
+import com.fsega.timetable.exception.NotFoundException;
+import com.fsega.timetable.mapper.InstitutionMapper;
+import com.fsega.timetable.model.external.IdNameDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
@@ -9,6 +12,10 @@ import com.fsega.timetable.model.internal.Institution;
 import com.fsega.timetable.repository.InstitutionRepository;
 
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -44,5 +51,16 @@ public class InstitutionService {
 
     public Institution getInstitution() {
         return institutionRepository.findByName(name);
+    }
+
+    public Institution getInstitution(UUID institutionId) {
+        return institutionRepository.findById(institutionId)
+                .orElseThrow(() -> new NotFoundException("Institution with id " + institutionId + " was not found"));
+    }
+
+    public List<IdNameDto> getInstitutions() {
+        return institutionRepository.findByOrderByNameAsc().stream()
+                .map(InstitutionMapper::toIdNameDto)
+                .collect(Collectors.toList());
     }
 }

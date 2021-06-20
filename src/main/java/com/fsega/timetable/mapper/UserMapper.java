@@ -27,6 +27,7 @@ public class UserMapper {
                 .email(entity.getEmail())
                 .username(entity.getUsername())
                 .role(entity.getRole())
+                .institution(InstitutionMapper.toIdNameDto(entity.getInstitution()))
                 .build();
     }
 

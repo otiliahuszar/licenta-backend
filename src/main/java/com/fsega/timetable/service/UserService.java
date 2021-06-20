@@ -4,8 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fsega.timetable.model.external.IdNameDto;
-import com.fsega.timetable.model.internal.Institution;
-import com.fsega.timetable.model.internal.Subject;
+import com.fsega.timetable.model.internal.*;
 import com.fsega.timetable.repository.CourseRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -18,8 +17,6 @@ import com.fsega.timetable.mapper.UserMapper;
 import com.fsega.timetable.model.enums.Role;
 import com.fsega.timetable.model.external.UserCreateDto;
 import com.fsega.timetable.model.external.UserDto;
-import com.fsega.timetable.model.internal.Semester;
-import com.fsega.timetable.model.internal.User;
 import com.fsega.timetable.repository.SemesterRepository;
 import com.fsega.timetable.repository.UserRepository;
 
@@ -103,29 +100,55 @@ public class UserService {
                 });
     }
 
-    public List<IdNameDto> getTeachers(UUID userId) {
-        Institution institution = institutionService.getInstitution();
+    public List<IdNameDto> getTeachers(UUID userId, UUID institutionId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id " + userId + " was not found"));
-        List<User> teachers = new ArrayList<>();
 
-        switch (user.getRole()) {
-            case ADMIN:
-                teachers = userRepository.findByRoleAndInstitutionOrderByLastNameAscFirstNameAsc(Role.TEACHER, institution);
-                break;
-            case STUDENT:
-                Semester sem = user.getSemester().orElse(null);
-                if (sem == null) {
-                    break;
-                }
-                Set<UUID> teacherIds = courseRepository.findAllTeacherIdsForSpecialization(
-                        sem.getSpecialization().getId(), sem.getStudyYear());
-                teachers = userRepository.findByInstitutionAndIdInOrderByLastNameAscFirstNameAsc(institution, teacherIds);
-                break;
-        }
+        List<User> teachers = institutionId == null ?
+                searchForDefaultInstitution(user) :
+                searchForGivenInstitution(user, institutionId);
+
         return teachers.stream()
                 .map(UserMapper::toIdNameDto)
                 .collect(Collectors.toList());
+    }
+
+    private List<User> searchForDefaultInstitution(User user) {
+        Institution institution = institutionService.getInstitution();
+
+        switch (user.getRole()) {
+            case ADMIN:
+                return userRepository.findByRoleAndInstitutionOrderByLastNameAscFirstNameAsc(Role.TEACHER, institution);
+            case STUDENT:
+                Semester sem = user.getSemester().orElse(null);
+                if (sem == null) {
+                    return new ArrayList<>();
+                }
+                Set<UUID> teacherIds = courseRepository.findAllTeacherIdsForSpecialization(
+                        sem.getSpecialization().getId(), sem.getStudyYear());
+                return userRepository.findByInstitutionAndIdInOrderByLastNameAscFirstNameAsc(institution, teacherIds);
+            case EXTERNAL_USER:
+                return user.getPublicCourses().stream()
+                        .map(Course::getTeacher)
+                        .sorted(Comparator.comparing(User::getFullName))
+                        .distinct()
+                        .collect(Collectors.toList());
+            default:
+                return new ArrayList<>();
+        }
+    }
+
+    private List<User> searchForGivenInstitution(User user, UUID institutionId) {
+        Institution institution = institutionService.getInstitution(institutionId);
+
+        switch (user.getRole()) {
+            case STUDENT:
+            case EXTERNAL_USER:
+                Set<UUID> teacherIds = courseRepository.findAllTeacherIdsForPublicCourses();
+                return userRepository.findByInstitutionAndIdInOrderByLastNameAscFirstNameAsc(institution, teacherIds);
+            default:
+                return new ArrayList<>();
+        }
     }
 
 }

@@ -22,6 +22,7 @@ public class CourseMapper {
                 .startHour(course.getStartHour())
                 .endHour(course.getEndHour())
                 .studyYear(course.getSemester().getStudyYear())
+                .institution(InstitutionMapper.toIdNameDto(spec.getInstitution()))
                 .specialization(SpecializationMapper.toIdNameDto(spec))
                 .subject(SubjectMapper.toIdNameDto(course.getSubject()))
                 .teacher(UserMapper.toIdNameDto(course.getTeacher()))

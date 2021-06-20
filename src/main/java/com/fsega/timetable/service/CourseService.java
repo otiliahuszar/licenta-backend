@@ -2,14 +2,14 @@ package com.fsega.timetable.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fsega.timetable.exception.NotFoundException;
 import com.fsega.timetable.mapper.UserMapper;
+import com.fsega.timetable.model.enums.Role;
 import com.fsega.timetable.model.external.CourseEditDto;
 import com.fsega.timetable.model.external.CourseMultipleEditDto;
 import com.fsega.timetable.repository.UserRepository;
@@ -100,9 +100,20 @@ public class CourseService {
     }
 
     public List<CourseFullDto> searchCourses(UUID userId, UUID specializationId, UUID subjectId, UUID teacherId,
-                                             LocalDate start, LocalDate end) {
+                                             LocalDate start, LocalDate end, Boolean isPublic) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id " + userId + " was not found"));
+
+        List<Course> courses = getCourses(specializationId, subjectId, teacherId, start, end, isPublic, user);
+        List<Course> publicCourses = getCoursesWithEnrollment(user, subjectId, teacherId, isPublic, start, end);
+
+        return Stream.concat(courses.stream(), publicCourses.stream())
+                .map(CourseMapper::toFullDto)
+                .collect(Collectors.toList());
+    }
+
+    private List<Course> getCourses(UUID specializationId, UUID subjectId, UUID teacherId,
+                                    LocalDate start, LocalDate end, Boolean isPublic, User user) {
         UUID specId = specializationId;
         UUID teacId = teacherId;
         Integer year = null;
@@ -120,9 +131,56 @@ public class CourseService {
             case TEACHER:
                 teacId = user.getId();
                 break;
+            case EXTERNAL_USER:
+                return new ArrayList<>();
         }
-        return repository.searchCourses(specId, subjectId, teacId, start, end, year).stream()
-                .map(CourseMapper::toFullDto)
+        return repository.searchCourses(specId, subjectId, teacId, start, end, year, isPublic);
+    }
+
+    private List<Course> getCoursesWithEnrollment(User user, UUID subjectId, UUID teacherId, Boolean isPublic,
+                                                  LocalDate start, LocalDate end) {
+        return user.getPublicCourses().stream()
+                .filter(c -> subjectId == null || c.getSubject().getId().equals(subjectId))
+                .filter(c -> teacherId == null || c.getTeacher().getId().equals(teacherId))
+                .filter(c -> isPublic == null || c.isPublic() == isPublic)
+                .filter(c -> start == null || !c.getDate().isBefore(start))
+                .filter(c -> end == null || !c.getDate().isAfter(end))
                 .collect(Collectors.toList());
+    }
+
+    public List<CourseFullDto> searchPublicCourses(UUID userId, UUID institutionId, UUID specializationId,
+                                                   UUID subjectId, UUID teacherId, String title, String description) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " was not found"));
+        Set<UUID> enrollments = user.getPublicCourses().stream()
+                .map(Course::getId)
+                .collect(Collectors.toSet());
+        Set<UUID> specializationEnrollments = user.getSemester()
+                .map(repository::findBySemester)
+                .map(l -> l.stream().map(Course::getId).collect(Collectors.toSet()))
+                .orElseGet(HashSet::new);
+
+        String searchTitle = ofNullable(title)
+                .map(t -> "%" + t + "%")
+                .orElse(null);
+        String searchDescription = ofNullable(description)
+                .map(t -> "%" + t + "%")
+                .orElse(null);
+        return repository.searchPublicCourses(institutionId, specializationId, subjectId, teacherId, searchTitle, searchDescription).stream()
+                .map(CourseMapper::toFullDto)
+                .peek(dto -> dto.setEnrolled(
+                        enrollments.contains(dto.getId()) || specializationEnrollments.contains(dto.getId())))
+                .collect(Collectors.toList());
+    }
+
+    public boolean enrollToCourse(UUID userId, UUID courseId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " was not found"));
+        Course course = repository.findById(courseId)
+                .orElseThrow(() -> new NotFoundException("Course with id " + courseId + " was not found"));
+
+        user.addPublicCourse(course);
+        userRepository.save(user);
+        return true;
     }
 }

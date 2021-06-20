@@ -31,24 +31,44 @@ public class SpecializationService {
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
 
-    public List<IdNameDto> getSpecializations(UUID userId) {
-        Institution institution = institutionService.getInstitution();
+    public List<IdNameDto> getSpecializations(UUID userId, UUID institutionId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id " + userId + " was not found"));
-        List<Specialization> spec = new ArrayList<>();
 
-        switch (user.getRole()) {
-            case ADMIN:
-                spec = repository.findByInstitutionOrderByInternalIdAsc(institution);
-                break;
-            case TEACHER:
-                Set<UUID> specIds = courseRepository.findSpecializationIdsForTeacher(user.getId());
-                spec = repository.findAllByInstitutionAndIdInOrderByInternalIdAsc(institution, specIds);
-                break;
-        }
+        List<Specialization> spec = institutionId == null ?
+                searchForDefaultInstitution(user) :
+                searchForGivenInstitution(user, institutionId);
+
         return spec.stream()
                 .map(SpecializationMapper::toIdNameDto)
                 .collect(Collectors.toList());
+    }
+
+    private List<Specialization> searchForDefaultInstitution(User user) {
+        Institution institution = institutionService.getInstitution();
+
+        switch (user.getRole()) {
+            case ADMIN:
+                return repository.findByInstitutionOrderByInternalIdAsc(institution);
+            case TEACHER:
+                Set<UUID> specIds = courseRepository.findSpecializationIdsForTeacher(user.getId());
+                return repository.findAllByInstitutionAndIdInOrderByInternalIdAsc(institution, specIds);
+            default:
+                return new ArrayList<>();
+        }
+    }
+
+    private List<Specialization> searchForGivenInstitution(User user, UUID institutionId) {
+        Institution institution = institutionService.getInstitution(institutionId);
+
+        switch (user.getRole()) {
+            case STUDENT:
+            case EXTERNAL_USER:
+                Set<UUID> specIds = courseRepository.findAllSpecializationIdsForPublicCourses();
+                return repository.findAllByInstitutionAndIdInOrderByInternalIdAsc(institution, specIds);
+            default:
+                return new ArrayList<>();
+        }
     }
 
     Specialization createSpecialization(SpecializationDto dto) {

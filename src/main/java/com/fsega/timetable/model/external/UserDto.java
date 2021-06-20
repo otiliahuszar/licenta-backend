@@ -21,5 +21,6 @@ public class UserDto {
     private String email;
     private String username;
     private Role role;
+    private IdNameDto institution;
 
 }

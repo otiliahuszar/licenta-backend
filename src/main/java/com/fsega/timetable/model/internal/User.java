@@ -82,4 +82,9 @@ public class User extends AbstractEntity {
         return publicCourses;
     }
 
+    public void addPublicCourse(Course course) {
+        getPublicCourses().add(course);
+        course.getStudents().add(this);
+    }
+
 }
