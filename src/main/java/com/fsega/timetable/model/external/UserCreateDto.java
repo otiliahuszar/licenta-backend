@@ -23,6 +23,11 @@ public class UserCreateDto {
     @NotBlank
     private String username;
 
-    @NotBlank
     private String password;
+
+    private boolean receiveEmailNotificationsBeforeCourses;
+
+    private Integer notificationInterval;
+
+    private boolean receiveEmailNotificationsForUpdates;
 }

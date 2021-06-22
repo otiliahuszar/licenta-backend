@@ -1,5 +1,6 @@
 version: '3.7'
 services:
+
   postgres:
     image: postgres:latest
     environment:
@@ -8,3 +9,9 @@ services:
       POSTGRES_DB: timetable
     ports:
       - '5432:5432'
+
+  smtp:
+    image: namshi/smtp
+    container_name: smtp
+    ports:
+      - '25:25'

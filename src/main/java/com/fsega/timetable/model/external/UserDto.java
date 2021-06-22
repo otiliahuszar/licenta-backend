@@ -22,5 +22,8 @@ public class UserDto {
     private String username;
     private Role role;
     private IdNameDto institution;
+    private boolean receiveEmailNotificationsBeforeCourses;
+    private Integer notificationInterval;
+    private boolean receiveEmailNotificationsForUpdates;
 
 }

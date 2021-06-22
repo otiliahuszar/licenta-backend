@@ -54,6 +54,12 @@ public class User extends AbstractEntity {
             inverseJoinColumns = @JoinColumn(name = "course_id"))
     private List<Course> publicCourses;
 
+    private boolean receiveEmailNotificationsBeforeCourses;
+
+    private Integer notificationInterval;
+
+    private boolean receiveEmailNotificationsForUpdates;
+
 
     public String getFullName() {
         return firstName + " " + lastName;
@@ -71,6 +77,9 @@ public class User extends AbstractEntity {
     }
 
     public void addSemester(Semester semester) {
+        if (getSemesters().contains(semester)) {
+            return;
+        }
         getSemesters().add(semester);
         semester.getStudents().add(this);
     }

@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
+import com.fsega.timetable.model.external.PasswordUpdateDto;
 import org.springframework.web.bind.annotation.*;
 
 import com.fsega.timetable.model.external.UserCreateDto;
@@ -20,13 +21,24 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public UserDto createUser(@RequestBody @Valid UserCreateDto userCreateDto) {
-        return userService.createExternalUser(userCreateDto);
+    public UserDto createUser(@RequestBody @Valid UserCreateDto dto) {
+        return userService.createExternalUser(dto);
     }
 
     @GetMapping("/{userId}")
-    public UserDto getUserById(@RequestHeader(name = "Authorization") String token,
-                               @PathVariable UUID userId) {
+    public UserDto getUserById(@PathVariable UUID userId) {
         return userService.getUser(userId);
+    }
+
+    @PutMapping("/{userId}")
+    public UserDto updateUser(@PathVariable UUID userId,
+                              @RequestBody @Valid UserCreateDto dto) {
+        return userService.updateUser(userId, dto);
+    }
+
+    @PutMapping("/{userId}/password")
+    public boolean updateUserPassword(@PathVariable UUID userId,
+                                      @RequestBody @Valid PasswordUpdateDto dto) {
+        return userService.updatePassword(userId, dto);
     }
 }

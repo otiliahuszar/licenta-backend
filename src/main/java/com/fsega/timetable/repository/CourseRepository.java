@@ -83,4 +83,6 @@ public interface CourseRepository extends JpaRepository<Course, UUID> {
 
     @Query("SELECT c.teacher.id FROM Course c WHERE c.isPublic = TRUE")
     Set<UUID> findAllTeacherIdsForPublicCourses();
+
+    Set<Course> findAllBySemester_IdIn(Set<UUID> semesterIds);
 }

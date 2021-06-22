@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fsega.timetable.model.external.IdNameDto;
+import com.fsega.timetable.model.external.PasswordUpdateDto;
 import com.fsega.timetable.model.internal.*;
 import com.fsega.timetable.repository.CourseRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -59,8 +60,8 @@ public class UserService {
     }
 
     public UserDto createExternalUser(UserCreateDto dto) {
-        validateUsername(dto.getUsername());
-        validateEmail(dto.getEmail());
+        validateUsername(dto.getUsername(), Role.EXTERNAL_USER);
+        validateEmail(dto.getEmail(), Role.EXTERNAL_USER);
 
         User s = UserMapper.toEntity(dto);
         s.setPassword(encoder.encode(dto.getPassword()));
@@ -70,15 +71,46 @@ public class UserService {
         return UserMapper.toDto(user);
     }
 
-    private void validateUsername(String username) {
-        userRepository.findByUsernameAndRole(username, Role.EXTERNAL_USER)
+    public UserDto updateUser(UUID userId, UserCreateDto dto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " was not found"));
+        if (!user.getEmail().equals(dto.getEmail())) {
+            validateEmail(dto.getEmail(), user.getRole());
+        }
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setEmail(dto.getEmail());
+        user.setReceiveEmailNotificationsBeforeCourses(dto.isReceiveEmailNotificationsBeforeCourses());
+        user.setNotificationInterval(dto.getNotificationInterval());
+        user.setReceiveEmailNotificationsForUpdates(dto.isReceiveEmailNotificationsForUpdates());
+
+        return UserMapper.toDto(userRepository.save(user));
+    }
+
+    public boolean updatePassword(UUID userId, PasswordUpdateDto dto) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " was not found"));
+
+        if (!encoder.matches(dto.getOldPassword(), user.getPassword())) {
+            throw new BadRequestException("Your old password is incorrect");
+        }
+        if (dto.getNewPassword().equals(dto.getOldPassword())) {
+            throw new BadRequestException("Your new password cannot be the same as the old one");
+        }
+        user.setPassword(encoder.encode(dto.getNewPassword()));
+        userRepository.save(user);
+        return true;
+    }
+
+    private void validateUsername(String username, Role role) {
+        userRepository.findByUsernameAndRole(username, role)
                 .ifPresent(u -> {
                     throw new BadRequestException("User with username " + username + " already exists");
                 });
     }
 
-    private void validateEmail(String email) {
-        userRepository.findByEmailAndRole(email, Role.EXTERNAL_USER)
+    private void validateEmail(String email, Role role) {
+        userRepository.findByEmailAndRole(email, role)
                 .ifPresent(u -> {
                     throw new BadRequestException("User with email " + email + " already exists");
                 });

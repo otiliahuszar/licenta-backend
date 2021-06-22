@@ -3,6 +3,7 @@ package com.fsega.timetable.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -23,6 +24,8 @@ import com.fsega.timetable.repository.CourseRepository;
 
 import lombok.RequiredArgsConstructor;
 
+import javax.mail.MessagingException;
+
 import static java.util.Optional.ofNullable;
 
 @Service
@@ -31,6 +34,7 @@ public class CourseService {
 
     private final CourseRepository repository;
     private final UserRepository userRepository;
+    private final EmailService emailService;
 
     Course createCourse(CourseDto dto, Semester semester, User teacher, Subject subject) {
         Course course = CourseMapper.toEntity(dto, semester, teacher, subject);
@@ -56,7 +60,21 @@ public class CourseService {
         course.setPublic(dto.getIsPublic());
 
         repository.save(course);
+        sendEmailsForUpdatedCourse(course);
         return true;
+    }
+
+    private void sendEmailsForUpdatedCourse(Course course) {
+        try {
+            for (User s : course.getSemester().getStudents()) {
+                emailService.sendCourseUpdateEmail(s, course);
+            }
+            for (User s : course.getStudents()) {
+                emailService.sendCourseUpdateEmail(s, course);
+            }
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
     }
 
     public Integer updateMultipleCourses(UUID teacherId, UUID courseId, CourseMultipleEditDto dto) {
@@ -78,6 +96,7 @@ public class CourseService {
 
         courses.forEach(c -> updateCourse(c, dto));
         repository.saveAll(courses);
+        sendEmailsForUpdatedCourses(dto, courses);
         return courses.size();
     }
 
@@ -96,6 +115,26 @@ public class CourseService {
         }
         if (dto.isEditResources()) {
             course.setResources(dto.getResources());
+        }
+    }
+
+    private void sendEmailsForUpdatedCourses(CourseMultipleEditDto dto, Set<Course> courses) {
+        Set<User> students = courses.stream()
+                .map(Course::getSemester)
+                .flatMap(s -> s.getStudents().stream())
+                .collect(Collectors.toSet());
+        Set<User> publicStudents = courses.stream()
+                .flatMap(s -> s.getStudents().stream())
+                .collect(Collectors.toSet());
+        try {
+            for (User s : students) {
+                emailService.sendCourseUpdateEmail(s, courses, dto);
+            }
+            for (User s : publicStudents) {
+                emailService.sendCourseUpdateEmail(s, courses, dto);
+            }
+        } catch (MessagingException e) {
+            e.printStackTrace();
         }
     }
 

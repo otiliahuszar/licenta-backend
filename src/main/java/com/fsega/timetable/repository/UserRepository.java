@@ -20,4 +20,6 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     List<User> findByRoleAndInstitutionOrderByLastNameAscFirstNameAsc(Role role, Institution institution);
 
     List<User> findByInstitutionAndIdInOrderByLastNameAscFirstNameAsc(Institution institution, Set<UUID> ids);
+
+    Set<User> findAllByReceiveEmailNotificationsBeforeCourses(boolean receive);
 }

@@ -27,6 +27,9 @@ public class UserMapper {
                 .email(entity.getEmail())
                 .username(entity.getUsername())
                 .role(entity.getRole())
+                .receiveEmailNotificationsBeforeCourses(entity.isReceiveEmailNotificationsBeforeCourses())
+                .notificationInterval(entity.getNotificationInterval())
+                .receiveEmailNotificationsForUpdates(entity.isReceiveEmailNotificationsForUpdates())
                 .institution(InstitutionMapper.toIdNameDto(entity.getInstitution()))
                 .build();
     }
